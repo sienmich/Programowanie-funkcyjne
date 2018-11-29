@@ -1,6 +1,6 @@
 (*
  * PSet - Polymorphic sets
- * Copyright (C) 1996-2003 Xavier Leroy, Nicolas Cannasse, Markus Mottl
+ * Copyright (C) 1996-2003 Xavier Leroy, Nicolas Cannasse, Markus Mottl, Michał Siennicki
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -82,7 +82,8 @@ let empty = { cmp = compare; set = Empty }
 
 let is_empty x = 
   x.set = Empty
-
+  
+(*dorzuca nowy wierzchołek*)
 let rec add_one cmp x = function
   | Node (l, k, r, h) ->
       let c = cmp x k in
@@ -98,6 +99,7 @@ let rec add_one cmp x = function
 let add x { cmp = cmp; set = set } =
   { cmp = cmp; set = add_one cmp x set }
 
+(*skleja dwa zbiory*)
 let rec join cmp l v r =
   match (l, r) with
     (Empty, _) -> add_one cmp v r
@@ -107,6 +109,7 @@ let rec join cmp l v r =
       if rh > lh + 2 then bal (join cmp l v rl) rv rr else
       make l v r
 
+(*rozdziela zbiór na mniejsze od x i większe od x*)
 let split x { cmp = cmp; set = set } =
   let rec loop x = function
       Empty ->
