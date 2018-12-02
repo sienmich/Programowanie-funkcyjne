@@ -68,7 +68,8 @@ let safe_minus1 a =
    Zakładamy, że różnica wysokości tych poddrzew jest <=2 *)
 let make l k r =
   Node (l, k, r, max (height l) (height r) + 1,
-  safe_int (safe_int (ile_int l + ile_int r) +  safe_plus1 (safe_int (snd k - fst k)) ) )
+  safe_int (safe_int (ile_int l + ile_int r) +
+  safe_plus1 (safe_int (snd k - fst k))))
 
 (* Balansuje drzewo, tzn za pomocą rotacji częściowo wyrównuje wysokości poddrzew
    Różnica wysokości [l] i [r] musi być mniejsza równa 3, zwraca poprawne drzewo *)
