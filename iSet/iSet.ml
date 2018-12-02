@@ -149,7 +149,7 @@ let rec add_one x = function
 
 (* Zwraca drzewo z dodatkowym wierzchołkiem - przedziałem:
    dla przedziału (x, y) jeśli zmiejsz = -1, to dodaje przedział (x, y-1);
-   jeśli zmiejsz = 1, to przedział (x+1, y), a dla zmniejsz = 0 przedział (x, y)
+   jeśli zmiejsz = 1, to przedział (x+1, y), dla zmniejsz = 0 przedział (x, y)
    Dodatkowo sprzadza czy przedział jest poprawny, tzn czy x<=y.
    *)
 let rec add_pSet x zmniejsz set =
@@ -203,13 +203,15 @@ let split x set =
     let maks = max_elt left in
       snd maks >= x && fst maks <= x
   in
-  let right = if left = Empty then right else 
+  let right = if left = Empty then right else
     let maks = max_elt left in
-      if snd maks > x then add_pSet (x, snd maks) 1 right else right 
+      if snd maks > x then add_pSet (x, snd maks) 1 right else right
   in
-  let left = if left = Empty then left else 
+  let left = if left = Empty then left else
     let maks = max_elt left in
-      if snd maks >= x  then add_pSet (fst maks , x) (-1) (remove_pSet maks left) else left
+      if snd maks >= x
+      then add_pSet (fst maks , x) (-1) (remove_pSet maks left)
+      else left
   in
   (left, present, right)
 
@@ -223,7 +225,8 @@ let rec remove (x, y) set =
   match find_lower y set with
   | None -> set
   | Some (a, b) when b < x -> set
-  | Some (a, b) -> remove (x, y) (add_pSet (a, x) (-1) (add_pSet (y, b) 1 (remove_pSet (a, b) set)  ))
+  | Some (a, b) -> remove (x, y) (add_pSet (a, x) (-1)
+                   (add_pSet (y, b) 1 (remove_pSet (a, b) set)))
 
 (* Dodaje do zbioru liczb wszystkie liczby w przedziale (x, y) *)
 let rec add (x, y) set =
