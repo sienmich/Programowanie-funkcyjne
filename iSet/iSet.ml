@@ -116,12 +116,6 @@ let rec max_elt = function
   | Node (_, _, r, _, _) -> max_elt r
   | Empty -> raise Not_found
 
-(* Zwraca drzewo bez maksymalnego elementu *)
-let rec remove_max_elt = function
-  | Node (l, _, Empty, _, _) -> l
-  | Node (l, k, r, _, _) -> bal l k (remove_max_elt r)
-  | Empty -> invalid_arg "PSet.remove_max_elt"
-
 (* Skleja dwa drzewa. Ich różnica wysokości jest <= 2*)
 let merge t1 t2 =
   match t1, t2 with
@@ -276,19 +270,26 @@ let below n s =
   | (l, true, _) -> safe_int (1 + ile_int l)
   
 (* Testy *)
-let a = add_one (2, 4) (add_one (6, 10) Empty)
-let a = add_one (1, 1) Empty
-let a = add_one (3, 3) a
-let a = add_one (5, 5) a
-let a = add_one (7, 7) a
-let a = add_one (9, 9) a
-let a = add_one (13, 13) a
-let a = add_one (11, 11) a
-let a = add_one (15, 15) a
-let a = add_one (17, 17) a
-let a = add_one (19, 19) a
-let b = find_lower 10 a
-let b = add (4, 8) a
-let b = add (3, 8) a
-let b = add (4, 7) a
-let b = add (3, 7) a
+(*
+let a = empty;;
+let a = add (-20, 5) a;;
+let a = add (6, 18) a;;
+let a = add (4, 10) a;;
+let a = add (14, 16) a;;
+let a = remove (-18, 14) a;;
+let a = remove (5, 17) a;;
+assert(mem 14 a = false);;
+let a = add (-4, 9) a;;
+assert(mem 16 a = false);;
+assert(mem (-14) a = false);;
+assert(mem 10 a = false);;
+let a = remove (-9, 10) a;;
+let a = add (-6, 7) a;;
+let a = add (-2, 7) a;;
+let a = add (-12, 17) a;;
+let a = add (-13, 8) a;;
+let a = add (-13, -2) a;;
+assert(mem 11 a = true);;
+assert(elements a = [(-20, -19); (-13, 18)]);;
+
+*)
