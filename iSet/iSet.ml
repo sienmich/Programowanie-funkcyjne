@@ -59,11 +59,11 @@ let safe_int a =
 
 (* Dla a = max_int zwraca a, wpp a+1 *)
 let safe_plus1 a =
-  if a < a + 1 then a + 1 else a
+  if a = max_int then a else a + 1
 
 (* Dla a = min_int zwraca a, wpp a-1 *)
 let safe_minus1 a =
-  if a - 1 < a then a - 1 else a
+  if a = min_int then a else a - 1
   
 (* Tworzy drzewo z korzeniem [k] i poddrzewami [l] oraz [r]
  * Zakładamy, że różnica wysokości tych poddrzew jest <=2 *)
@@ -101,19 +101,19 @@ let bal l k r =
     | Empty -> assert false
   else make l k r
 
-(* Zwraca minimalny element w drzewie *)
+(* Zwraca minimalny element w drzewie. Dla pustego podnosi wyjątek. *)
 let rec min_elt = function
   | Node (Empty, k, _, _, _) -> k
   | Node (l, _, _, _, _) -> min_elt l
   | Empty -> raise Not_found
 
-(* Zwraca drzewo bez minimalnego elementu *)
+(* Zwraca drzewo bez minimalnego elementu. Dla pustego podnosi wyjątek. *)
 let rec remove_min_elt = function
   | Node (Empty, _, r, _, _) -> r
   | Node (l, k, r, _, _) -> bal (remove_min_elt l) k r
   | Empty -> invalid_arg "PSet.remove_min_elt"
   
-(* Zwraca maksymalny element *)
+(* Zwraca maksymalny element.  Dla pustego podnosi wyjątek. *)
 let rec max_elt = function
   | Node (_, k, Empty, _, _) -> k
   | Node (_, _, r, _, _) -> max_elt r
@@ -206,7 +206,7 @@ let split x set =
   let left = if left = Empty then left else
     let maks = max_elt left in
       if snd maks >= x
-      then add_pSet (fst maks , x) (-1) (remove_pSet maks left)
+      then add_pSet (fst maks, x) (-1) (remove_pSet maks left)
       else left
   in
   (left, present, right)
