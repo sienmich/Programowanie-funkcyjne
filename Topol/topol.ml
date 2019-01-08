@@ -21,7 +21,7 @@ let topol lis =
   
   (* Zwiększa lub zmiejsza licznik krawędzi wchodzących
      do danego wierzchołka grafu *)
-  let dodaj komu ile_dodac mapa kto_ma_0 =
+  let zmiana_stopnia komu ile_dodac mapa kto_ma_0 =
     let ile = ile_dodac + (try find komu mapa with Not_found -> (-5)) in
     if ile < (-2) then (add komu ile_dodac mapa, komu::kto_ma_0) else
     if ile = 0 && ile_dodac = (-1)
@@ -32,26 +32,27 @@ let topol lis =
      i lista wierzchołków, do których nie wchodzą nieprzetworzone krawędzie *)
   let (ile_wchodzi, kto_ma_0) = 
     let g mapa (ele, lista) =
-      List.fold_left (fun m e -> fst (dodaj e 1 m [])) mapa lista in
+      List.fold_left (fun m e -> fst (zmiana_stopnia e 1 m [])) mapa lista in
     let m = List.fold_left g empty lis in
     let f (m, zer) (ele, lista) =
-      dodaj ele 0 m zer in
+      zmiana_stopnia ele 0 m zer in
     List.fold_left f (m, []) lis in
 
   (* Usuwa z grafu wierzchołek, do którego nie wchodzą żadne krawędzie.
      Zwraca zaktualizuje (ile_wchodzi, kto_ma_0) *)
-  let usuwanko (ile_wchodzi, kto_ma_0) usuwany =
-    let lis = try find usuwany kolejnosc with Not_found -> [] in
+  let usun_wierzcholek (ile_wchodzi, kto_ma_0) usuwany =
+    let nastepnicy = try find usuwany kolejnosc with Not_found -> [] in
     let pom (ile_wchodzi, kto_ma_0) komu_zmiejsz =
-      dodaj komu_zmiejsz (-1) ile_wchodzi kto_ma_0 in
-    List.fold_left pom (ile_wchodzi, kto_ma_0) lis in
+      zmiana_stopnia komu_zmiejsz (-1) ile_wchodzi kto_ma_0 in
+    List.fold_left pom (ile_wchodzi, kto_ma_0) nastepnicy in
   
   (* Główny algorytm, który po kolei usuwa wierzchołki 
      o zerowym stopniu wchodzącym. Zwraca kolejność topologiczną *)
   let rec f (ile_wchodzi, kto_ma_0)  = 
     match kto_ma_0 with
-    | h::t -> h::(f (usuwanko (ile_wchodzi, t) h))
+    | h::t -> h::(f (usun_wierzcholek (ile_wchodzi, t) h))
     | _ when fold (+) ile_wchodzi 0 = 0 -> []
     | _ -> raise Cykliczne in
+    
   f (ile_wchodzi, kto_ma_0)
   
